@@ -1,0 +1,12 @@
+[run]
+branch = True
+source =
+    kw.platform
+
+[paths]
+source =
+    kw/platform
+    .tox/*/lib/python*/site-packages/kw/platform
+
+[report]
+show_missing = True
