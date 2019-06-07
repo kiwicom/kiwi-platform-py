@@ -1,3 +1,48 @@
 [build-system]
-requires = ["setuptools>=40.6.0", "wheel"]
-build-backend = "setuptools.build_meta"
+requires = ["poetry>0.*"]
+build-backend = "poetry.masonry.api"
+
+[tool.poetry]
+name = "kiwi-platform"
+version = "0.1.0"
+description = "Company standards as code for Kiwi.com"
+authors = [
+    "Bence Nagy <bence@kiwi.com>",
+    "Pavel Dedik <pavel.dedik@kiwi.com>",
+]
+
+packages = [
+    { include = "kw" },
+]
+
+readme = "README.md"
+keywords = ["kiwicom"]
+license = "Blue Oak License"
+
+repository = "https://github.com/kiwicom/kiwi-platform-py/"
+homepage = "https://github.com/kiwicom/kiwi-platform-py/"
+
+classifiers = [
+    "Development Status :: 1 - Planning",
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 2",
+    "Programming Language :: Python :: 2.7",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.5",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+
+include = ["*.md", "*.toml", "*.txt", "*.yaml", ".coveragerc", "tox.ini"]
+
+[tool.poetry.dependencies]
+python = "~2.7 || ^3.5"
+
+[tool.poetry.dev-dependencies]
+pytest = "^4.6"
+coverage = "^4.5"
