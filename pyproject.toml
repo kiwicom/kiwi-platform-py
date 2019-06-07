@@ -42,7 +42,10 @@ include = ["*.md", "*.toml", "*.txt", "*.yaml", ".coveragerc", "tox.ini"]
 
 [tool.poetry.dependencies]
 python = "~2.7 || ^3.5"
+webob = "^1.8"
+python-dateutil = "^2.8"
 
 [tool.poetry.dev-dependencies]
 pytest = "^4.6"
+pytest-freezegun = "^0.3.0"
 coverage = "^4.5"
