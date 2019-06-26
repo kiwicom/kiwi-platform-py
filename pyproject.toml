@@ -47,6 +47,8 @@ python-dateutil = "^2.8"
 
 [tool.poetry.dev-dependencies]
 pytest = "^4.6"
+aiohttp = { version = "^3.5", python = "^3.5.3" }
+pytest-aiohttp = { version = "^0.3.0", python = "^3.5" }
 pytest-freezegun = "^0.3.0"
 coverage = "^4.5"
 sphinx = { version = "^2.1", python = "^3.5", optional = false }

@@ -14,6 +14,7 @@ standards in their libraries and applications written in Python.
     :caption: Contents:
 
     wsgi
+    aiohttp
     settings
 
 
