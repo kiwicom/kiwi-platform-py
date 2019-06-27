@@ -4,9 +4,8 @@ Session
 """
 
 import requests
-import wrapt
 
-from ..utils import _add_user_agent, construct_user_agent
+from ..utils import add_user_agent_header, construct_user_agent, report_to_sentry
 
 
 class KiwiSession(requests.Session):
@@ -19,7 +18,9 @@ class KiwiSession(requests.Session):
         session.get('https://kiwi.com')
     """
 
-
-wrapt.wrap_function_wrapper(
-    KiwiSession, "request", _add_user_agent(construct_user_agent)
-)
+    def request(self, *args, **kwargs):
+        headers = kwargs.setdefault("headers", {})
+        add_user_agent_header(headers, construct_user_agent)
+        response = super(KiwiSession, self).request(*args, **kwargs)
+        report_to_sentry(response, sunset_header=True, deprecated_usage_header=True)
+        return response
