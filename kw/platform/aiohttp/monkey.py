@@ -6,7 +6,8 @@ Monkey Patching
 import aiohttp
 import wrapt
 
-from ..utils import _add_user_agent, construct_user_agent
+from .. import wrappers
+from ..utils import construct_user_agent
 
 
 def patch_with_user_agent(user_agent=None):
@@ -23,7 +24,7 @@ def patch_with_user_agent(user_agent=None):
         user_agent = construct_user_agent
 
     wrapt.wrap_function_wrapper(
-        "aiohttp", "ClientSession._request", _add_user_agent(user_agent)
+        "aiohttp", "ClientSession._request", wrappers.add_user_agent(user_agent)
     )
 
 

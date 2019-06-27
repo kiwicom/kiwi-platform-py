@@ -4,6 +4,7 @@ Utils
 """
 
 import importlib
+import logging
 import os
 import re
 from datetime import datetime
@@ -12,6 +13,14 @@ from dateutil.parser import parse
 
 from . import settings
 from ._compat import ModuleNotFoundError  # pylint: disable=redefined-builtin
+
+
+try:
+    import sentry_sdk
+
+    sentry_sdk_enabled = True
+except ImportError:
+    sentry_sdk_enabled = False
 
 
 USER_AGENT_RE = re.compile(
@@ -91,13 +100,52 @@ def add_user_agent_header(headers, user_agent):
             )
 
 
-def _add_user_agent(user_agent=None):
-    def _add_headers(func, instance, args, kwargs):
-        headers = kwargs.setdefault("headers", {})
-        add_user_agent_header(headers, user_agent)
-        return func(*args, **kwargs)
+def capture_message(message, level="info"):
+    """Capture mesage to Sentry if Sentry SDK is installed, otherwise use logging.
 
-    return _add_headers
+    :param message: Message to capture.
+    :param level: Level of the message, ``info`` by default.
+    """
+    if sentry_sdk_enabled:
+        sentry_sdk.capture_message(message, level=level)
+    else:
+        logging.warning("Sentry SDK not configured.")
+        getattr(logging, level)(message)
+
+
+def report_to_sentry(response, sunset_header=True, deprecated_usage_header=True):
+    """Report response headers to Sentry.
+
+    Reports the following headers:
+
+    - ``Sunset`` or ``sunset`` relation type in ``Link`` header
+    - ``Deprecated-Usage``
+    """
+    if sunset_header:
+        sunset_warning = ""
+
+        if "Sunset" in response.headers:
+            sunset_warning += (
+                "The Sunset header found in the HTTP response: "
+                "{}".format(response.headers["Sunset"])
+            )
+        if "sunset" in response.links:
+            if sunset_warning:
+                sunset_warning += ", additional info: "
+            else:
+                sunset_warning += (
+                    "The Sunset Link relation type found in the HTTP response: "
+                )
+            sunset_warning += str(response.links["sunset"]["url"])
+
+        if sunset_warning:
+            capture_message(sunset_warning, level="warning")
+
+    if deprecated_usage_header:
+        deprecated_usage_warning = response.headers.get("Deprecated-Usage")
+
+        if deprecated_usage_warning:
+            capture_message(deprecated_usage_warning, level="warning")
 
 
 def httpdate(dt):
