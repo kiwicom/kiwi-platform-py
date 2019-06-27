@@ -58,6 +58,7 @@ wrapt = "^1.11"
 requests = "^2.22"
 httpretty = "^0.9.6"
 pytest-mock = "^1.10"
+aioresponses = {version = "^0.6.0",python = "^3.5"}
 
 [tool.poetry.extras]
 docs = ["sphinx"]

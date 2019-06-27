@@ -120,6 +120,9 @@ def report_to_sentry(response, sunset_header=True, deprecated_usage_header=True)
 
     - ``Sunset`` or ``sunset`` relation type in ``Link`` header
     - ``Deprecated-Usage``
+
+    :param sunset_header: Whether to report the ``Sunset`` header.
+    :param deprecated_usage_header: Whether to report the ``Deprecated-Usage`` header.
     """
     if sunset_header:
         sunset_warning = ""
