@@ -10,3 +10,8 @@ __email__ = "bence@kiwi.com"
 
 __license__ = "Blue Oak License"
 __copyright__ = "Copyright (c) 2019 Kiwi.com"
+
+from .monkey import patch
+
+
+__all__ = ["patch"]

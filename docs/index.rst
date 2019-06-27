@@ -15,6 +15,8 @@ standards in their libraries and applications written in Python.
 
     wsgi
     aiohttp
+    requests
+    monkey
     settings
 
 
