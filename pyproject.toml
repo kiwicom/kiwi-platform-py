@@ -41,17 +41,18 @@ classifiers = [
 include = ["*.md", "*.toml", "*.txt", "*.yaml", ".coveragerc", "tox.ini"]
 
 [tool.poetry.dependencies]
-python = "~2.7 || ^3.5"
+python = "~2.7 || ^3.5.3"
 webob = "^1.8"
 python-dateutil = "^2.8"
+aiohttp = { version = "^3.5", optional = true, python = "^3.5.3" }
+sphinx = { version = "^2.1", optional = true, python = "^3.5.3" }
 
 [tool.poetry.dev-dependencies]
+coverage = "^4.5"
 pytest = "^4.6"
-aiohttp = { version = "^3.5", python = "^3.5.3" }
 pytest-aiohttp = { version = "^0.3.0", python = "^3.5" }
 pytest-freezegun = "^0.3.0"
-coverage = "^4.5"
-sphinx = { version = "^2.1", python = "^3.5", optional = false }
 
 [tool.poetry.extras]
 docs = ["sphinx"]
+aiohttp = ["aiohttp"]
