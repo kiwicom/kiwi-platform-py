@@ -3,6 +3,13 @@ import pytest
 from kw.platform import utils as uut
 
 
+def test_ensure_module_is_available():
+    assert uut.ensure_module_is_available("requests") is True
+
+    # Should return False for missing module
+    assert uut.ensure_module_is_available("pandas") is False
+
+
 @pytest.mark.parametrize(
     "user_agent,should_pass",
     [
@@ -16,3 +23,37 @@ from kw.platform import utils as uut
 )
 def test_user_agent_re(user_agent, should_pass):
     assert bool(uut.USER_AGENT_RE.match(user_agent)) is should_pass
+
+
+def test_construct_user_agent(app_env_vars):
+    user_agent = uut.construct_user_agent()
+    assert user_agent == "unittest/1.0 (Kiwi.com test-env)"
+
+    user_agent = uut.construct_user_agent(
+        app_name="different-test",
+        package_version="2.0",
+        app_environment="different-test-env",
+    )
+    assert user_agent == "different-test/2.0 (Kiwi.com different-test-env)"
+
+
+def test_construct_user_agent_missing_args(monkeypatch):
+    # Cleanup env vars.
+    # Otherwise the 'None' arguments would get overwritten
+    monkeypatch.setenv("APP_NAME", "")
+    monkeypatch.setenv("PACKAGE_VERSION", "")
+    monkeypatch.setenv("APP_ENVIRONMENT", "")
+
+    user_agent_1 = uut.construct_user_agent(
+        app_name=None, package_version="2.0", app_environment="different-test-env"
+    )
+    user_agent_2 = uut.construct_user_agent(
+        app_name="different-test",
+        package_version=None,
+        app_environment="different-test-env",
+    )
+    user_agent_3 = uut.construct_user_agent(
+        app_name="different-test", package_version="2.0", app_environment=None
+    )
+    for user_agent in (user_agent_1, user_agent_2, user_agent_3):
+        assert user_agent is None
