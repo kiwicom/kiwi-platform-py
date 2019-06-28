@@ -1,7 +1,9 @@
 import time
+from datetime import datetime
 
 import aiohttp
 import pytest
+from aiohttp import web
 from freezegun import freeze_time
 
 from kw.platform import aiohttp as uut
@@ -101,3 +103,54 @@ async def test_aiohttp_request_not_patched():
             assert "aiohttp" in resp.request_info.headers.get("User-Agent")
 
     assert not hasattr(aiohttp, "__kiwi_platform_patch")
+
+
+@pytest.mark.parametrize(
+    "when, expected_sunset, info_url",
+    [
+        (
+            datetime(2019, 8, 5, 5, 10, 0),
+            "Mon, 05 Aug 2019 05:10:00 GMT",
+            "https://example.com",
+        ),
+        (None, None, "https://example.com"),
+        (datetime(2019, 8, 5, 5, 10, 0), "Mon, 05 Aug 2019 05:10:00 GMT", None),
+    ],
+)
+async def test_aiohttp__utils_sunset(
+    aiohttp_client, loop, when, expected_sunset, info_url
+):
+    @uut.utils.sunset(when=when, info_url=info_url)
+    async def index(request):
+        return web.Response(text="Index")
+
+    result = await index("request")
+
+    if info_url:
+        assert result.headers["Link"] == '<{}>;rel="sunset"'.format(info_url)
+    else:
+        assert "Link" not in result.headers
+
+    if when:
+        assert result.headers["Sunset"] == expected_sunset
+    else:
+        assert "Sunset" not in result.headers
+
+
+async def test_aiohttp__utils_sunset__append_link(aiohttp_client, loop):
+    @uut.utils.sunset(info_url="https://sunset.example.com")
+    async def index(request):
+        return web.Response(
+            text="Index", headers={"Link": '<https://meta.example.com>;rel="meta"'}
+        )
+
+    result = await index("request")
+    assert result.headers["Link"] == (
+        '<https://meta.example.com>;rel="meta",'
+        '<https://sunset.example.com>;rel="sunset"'
+    )
+
+
+def test_utils_sunset__error():
+    with pytest.raises(TypeError):
+        uut.utils.sunset()
