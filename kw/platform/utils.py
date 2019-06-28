@@ -98,3 +98,33 @@ def _add_user_agent(user_agent=None):
         return func(*args, **kwargs)
 
     return _add_headers
+
+
+def httpdate(dt):
+    """Return a string representation of a date according to RFC 1123 (HTTP/1.1).
+
+    The supplied date must be in UTC.
+
+    :param dt: Datetime object in UTC.
+    :type dt: datetime
+    :rtype: str
+    """
+    weekday = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"][dt.weekday()]
+    month = [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
+    ][dt.month - 1]
+    return (
+        "{weekday}, {dt.day:02d} {month} {dt.year:04d} "
+        "{dt.hour:02d}:{dt.minute:02d}:{dt.second:02d} GMT"
+    ).format(weekday=weekday, month=month, dt=dt)

@@ -16,7 +16,7 @@ Install with `pip install kiwi-platform`.
 
 ## Documentation
 
-[kiwi-platform-py.readthedocs.io](https://kiwi-platform-py.readthedocs.io/en/latest/)
+Check the documentation on [reathedocs.io](https://kiwi-platform-py.readthedocs.io/en/latest/).
 
 ## Contributing
 

@@ -8,3 +8,6 @@
 
     .. automodule:: kw.platform.aiohttp.session
         :members:
+
+    .. automodule:: kw.platform.aiohttp.utils
+        :members:

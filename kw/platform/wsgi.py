@@ -1,6 +1,6 @@
 """
-WSGI helpers
-============
+WSGI
+====
 
 Various helpers for WSGI applications.
 """
