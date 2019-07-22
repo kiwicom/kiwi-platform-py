@@ -6,12 +6,29 @@
 Kiwi.com standards
 ==================
 
-A library which makes it easier for developers to use and apply Kiwi.com company
-standards in their libraries and applications written in Python.
+A library which makes it easier for developers to use and apply Kiwi.com
+company standards in their libraries and applications written in Python.
+
+Installation
+------------
+
+Install with pip::
+
+    pip install kiwi-platform
+
+User's Guides
+-------------
+
+.. toctree::
+    :maxdepth: 1
+
+    useragents
+
+API Reference
+-------------
 
 .. toctree::
     :maxdepth: 2
-    :caption: Contents:
 
     wsgi
     aiohttp
