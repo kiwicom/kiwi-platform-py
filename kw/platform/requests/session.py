@@ -6,7 +6,7 @@ Session
 import requests
 import wrapt
 
-from .monkey import _add_user_agent, construct_user_agent
+from ..utils import _add_user_agent, construct_user_agent
 
 
 class KiwiSession(requests.Session):

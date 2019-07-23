@@ -73,3 +73,28 @@ def construct_user_agent(app_name=None, package_version=None, app_environment=No
     else:
         user_agent = None
     return user_agent
+
+
+def add_user_agent_header(headers, user_agent):
+    if not headers.get("User-Agent"):
+        custom_agent = user_agent() if callable(user_agent) else user_agent
+        if custom_agent:
+            headers["User-Agent"] = custom_agent
+        else:
+            # If no user_agent nor env vars has been provided, request can't be
+            # patched.
+            raise ValueError(
+                "Unable to patch requests 'User-Agent' header. You have to provide"
+                " either environment variables or patch manually using "
+                "functions `construct_user_agent` and `patch_with_user_agent`."
+                "You can find more info in README."
+            )
+
+
+def _add_user_agent(user_agent=None):
+    def _add_headers(func, instance, args, kwargs):
+        headers = kwargs.setdefault("headers", {})
+        add_user_agent_header(headers, user_agent)
+        return func(*args, **kwargs)
+
+    return _add_headers
