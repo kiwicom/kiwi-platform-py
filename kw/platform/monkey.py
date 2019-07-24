@@ -8,7 +8,7 @@ import threading
 
 
 # Define modules and which of them should be patched automatically.
-_PATCH_MODULES = {"requests": False}
+_PATCH_MODULES = {"requests": False, "aiohttp": False}
 _PATCHED_MODULES = set()
 
 

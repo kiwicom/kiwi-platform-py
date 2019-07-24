@@ -1,19 +1,33 @@
 import time
 
+import aiohttp
 import pytest
-from aiohttp import web
 from freezegun import freeze_time
 
 from kw.platform import aiohttp as uut
+
+
+URL = "http://kiwi.com"
+
+
+@pytest.fixture
+def patch_aiohttp(mocker, app_env_vars):
+    mocker.spy(aiohttp.ClientSession, "_request")
+
+    uut.monkey.patch()
+
+    yield
+
+    del aiohttp.__kiwi_platform_patch  # pylint: disable=no-member
 
 
 def create_app(sleep_seconds=0, middlewares=None):
     def hello(request):
         if sleep_seconds:
             time.sleep(sleep_seconds)
-        return web.Response(text="Hello, world!")
+        return aiohttp.web.Response(text="Hello, world!")
 
-    app = web.Application(middlewares=middlewares)
+    app = aiohttp.web.Application(middlewares=middlewares)
     app.router.add_get("/", hello)
     return app
 
@@ -59,3 +73,31 @@ async def test_user_agent_middleware__slowdown(
 
     assert res.status == 200
     assert request_time >= expected_time
+
+
+async def test_kiwi_client_session(patch_aiohttp):
+    async with uut.KiwiClientSession() as client:
+        async with client.get(URL) as resp:
+            assert (
+                resp.request_info.headers.get("User-Agent")
+                == "unittest/1.0 (Kiwi.com test-env)"
+            )
+
+
+async def test_aiohttp_request_patched(patch_aiohttp):
+    async with aiohttp.ClientSession() as client:
+        async with client.get(URL) as resp:
+            assert (
+                resp.request_info.headers.get("User-Agent")
+                == "unittest/1.0 (Kiwi.com test-env)"
+            )
+
+    assert getattr(aiohttp, "__kiwi_platform_patch") is True
+
+
+async def test_aiohttp_request_not_patched():
+    async with aiohttp.ClientSession() as client:
+        async with client.get(URL) as resp:
+            assert "aiohttp" in resp.request_info.headers.get("User-Agent")
+
+    assert not hasattr(aiohttp, "__kiwi_platform_patch")
