@@ -163,15 +163,15 @@ refused with the ``HTTP 400 Bad Request`` response, the message of the response
 must also explain why the request to the service was denied.
 
 For WSGI applications, the :func:`kw.platform.wsgi.user_agent_middleware`
-middleware can be used for validating requests header. In Flask, applying
-the middleware can be done like this::
+middleware can be used for validating headers of incoming requests. In Flask,
+applying the middleware can be done like this::
 
     from flask import Flask
 
     from kw.platform.wsgi import user_agent_middleware
 
     app = Flask(__name__)
-    app.wsgi_app = user_agent_middleware(app)
+    app.wsgi_app = user_agent_middleware(app.wsgi_app)
 
     app.run()
 
