@@ -14,6 +14,10 @@ Company standards as code for Kiwi.com
 
 Install with `pip install kiwi-platform`.
 
+## Documentation
+
+[kiwi-platform-py.readthedocs.io](https://kiwi-platform-py.readthedocs.io/en/latest/)
+
 ## Contributing
 
 1. Check for open issues or open a fresh issue to start a discussion
