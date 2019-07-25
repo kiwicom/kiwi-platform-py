@@ -4,11 +4,12 @@ build-backend = "poetry.masonry.api"
 
 [tool.poetry]
 name = "kiwi-platform"
-version = "0.2.0"
+version = "0.2.1"
 description = "Company standards as code for Kiwi.com"
 authors = [
     "Bence Nagy <bence@kiwi.com>",
     "Pavel Dedik <pavel.dedik@kiwi.com>",
+    "Tomas Hudec <tomas.hudec@kiwi.com>",
 ]
 
 packages = [
