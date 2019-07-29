@@ -1,4 +1,4 @@
-# kiwi-platform-py
+# kiwi-platform-py test
 
 [![CircleCI](https://circleci.com/gh/kiwicom/kiwi-platform-py.svg?style=svg)](https://circleci.com/gh/kiwicom/kiwi-platform-py)
 [![codecov](https://codecov.io/gh/kiwicom/kiwi-platform-py/branch/master/graph/badge.svg)](https://codecov.io/gh/kiwicom/kiwi-platform-py)
