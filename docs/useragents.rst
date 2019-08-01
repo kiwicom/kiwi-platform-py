@@ -58,7 +58,7 @@ For async applications using :mod:`aiohttp` as an HTTP client, you can use the
 
     from kw.platform.aiohttp import KiwiClientSession
 
-    async with aiohttp.KiwiClientSession() as client:
+    async with KiwiClientSession() as client:
         async with client.get("https://api.example.com") as resp:
             html = await resp.text()
             print(html)
