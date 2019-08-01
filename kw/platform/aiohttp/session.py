@@ -21,6 +21,7 @@ with warnings.catch_warnings():
         Usage::
 
             from kw.platform.aiohttp import KiwiClientSession
+
             async with KiwiClientSession() as c:
                 await c.get('https://kiwi.com')
         """
