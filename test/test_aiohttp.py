@@ -11,9 +11,6 @@ from freezegun import freeze_time
 from kw.platform import aiohttp as uut
 
 
-URL = "http://kiwi.com"
-
-
 @pytest.fixture
 def patch_aiohttp(mocker, app_env_vars):
     mocker.spy(aiohttp.ClientSession, "_request")
@@ -104,18 +101,18 @@ async def test_aiohttp__kiwi_client_session__sunset(loop, mocker, aiomock):
     )
 
 
-async def test_aiohttp__kiwi_client_session__user_agent(app_env_vars):
+async def test_aiohttp__kiwi_client_session__user_agent(httpbin, app_env_vars):
     async with uut.KiwiClientSession() as client:
-        async with client.get(URL) as resp:
+        async with client.get(httpbin.url) as resp:
             assert (
                 resp.request_info.headers.get("User-Agent")
                 == "unittest/1.0 (Kiwi.com test-env)"
             )
 
 
-async def test_aiohttp__request_patched(patch_aiohttp):
+async def test_aiohttp__request_patched(httpbin, patch_aiohttp):
     async with aiohttp.ClientSession() as client:
-        async with client.get(URL) as resp:
+        async with client.get(httpbin.url) as resp:
             assert (
                 resp.request_info.headers.get("User-Agent")
                 == "unittest/1.0 (Kiwi.com test-env)"
@@ -124,9 +121,9 @@ async def test_aiohttp__request_patched(patch_aiohttp):
     assert getattr(aiohttp, "__kiwi_platform_patch") is True
 
 
-async def test_aiohttp__request_not_patched():
+async def test_aiohttp__request_not_patched(httpbin):
     async with aiohttp.ClientSession() as client:
-        async with client.get(URL) as resp:
+        async with client.get(httpbin.url) as resp:
             assert "aiohttp" in resp.request_info.headers.get("User-Agent")
 
     assert not hasattr(aiohttp, "__kiwi_platform_patch")
