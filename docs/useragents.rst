@@ -31,8 +31,8 @@ Making HTTP requests
 
 The library provides custom sessions for two most used 3rd party libraries:
 
-- `requests <https://2.python-requests.org/en/master/>`_
-- `aiohttp <https://aiohttp.readthedocs.io/en/stable/>`_
+- `requests <https://requests.readthedocs.io>`_
+- `aiohttp <https://aiohttp.readthedocs.io>`_
 
 In order to use them, your application needs to populate the following
 environment variables:
