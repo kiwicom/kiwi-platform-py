@@ -21,6 +21,8 @@ def create_app(sleep_seconds=0):
     "user_agent,expected_status,current_time",
     [
         ("invalid", 200, "2019-05-21"),
+        (None, 400, "2020-01-01"),
+        ("", 400, "2020-01-01"),
         ("invalid", 400, "2020-01-01"),
         ("mambo/1a (Kiwi.com dev)", 200, "2020-01-01"),
     ],
@@ -29,7 +31,8 @@ def test_user_agent_middleware__restrict(user_agent, expected_status, current_ti
     app = create_app()
 
     req = BaseRequest.blank("/")
-    req.user_agent = user_agent
+    if user_agent is not None:
+        req.user_agent = user_agent
 
     with freeze_time(current_time, tick=True):
         app = uut.user_agent_middleware(app)
@@ -41,6 +44,8 @@ def test_user_agent_middleware__restrict(user_agent, expected_status, current_ti
 @pytest.mark.parametrize(
     "user_agent,sleep_seconds,expected_time,current_time",
     [
+        (None, 0.1, 0.2, "2019-07-26"),
+        ("", 0.1, 0.2, "2019-07-26"),
         ("invalid", 0.1, 0.2, "2019-07-26"),
         ("mambo/1a (Kiwi.com dev)", 0.1, 0.1, "2019-07-26"),
         ("invalid", 0.1, 0.1, "2019-05-07"),
@@ -52,7 +57,8 @@ def test_user_agent_middleware__slowdown(
     app = create_app(sleep_seconds=sleep_seconds)
 
     req = BaseRequest.blank("/")
-    req.user_agent = user_agent
+    if user_agent is not None:
+        req.user_agent = user_agent
 
     with freeze_time(current_time, tick=True):
         app = uut.user_agent_middleware(app)

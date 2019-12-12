@@ -13,6 +13,8 @@ def test_ensure_module_is_available():
 @pytest.mark.parametrize(
     "user_agent,should_pass",
     [
+        (None, False),
+        ("", False),
         ("invalid", False),
         ("mambo/1a (Kiwi.com dev)", True),
         ("mambo/1a (kiwi.com dev)", True),
@@ -22,7 +24,7 @@ def test_ensure_module_is_available():
     ],
 )
 def test_user_agent_re(user_agent, should_pass):
-    assert bool(uut.USER_AGENT_RE.match(user_agent)) is should_pass
+    assert uut.UserAgentValidator(user_agent).is_valid is should_pass
 
 
 def test_construct_user_agent(app_env_vars):

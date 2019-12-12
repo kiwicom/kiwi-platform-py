@@ -34,7 +34,7 @@ REQ_RESTRICT_DATETIME = parse(settings.KIWI_REQUESTS_RESTRICT_DATETIME)
 class UserAgentValidator:
     def __init__(self, value):
         self.value = value
-        self.is_valid = bool(USER_AGENT_RE.match(self.value))
+        self.is_valid = bool(self.value and USER_AGENT_RE.match(self.value))
 
     @property
     def ok(self):
