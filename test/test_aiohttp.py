@@ -43,6 +43,8 @@ def create_app(sleep_seconds=0, middlewares=None):
     "user_agent,expected_status,current_time",
     [
         ("invalid", 200, "2019-05-21"),
+        (None, 400, "2020-01-01"),
+        ("", 400, "2020-01-01"),
         ("invalid", 400, "2020-01-01"),
         ("mambo/1a (Kiwi.com dev)", 200, "2020-01-01"),
     ],
@@ -54,7 +56,10 @@ async def test_aiohttp__user_agent_middleware__restrict(
     client = await aiohttp_client(app)
 
     with freeze_time(current_time, tick=True):
-        res = await client.get("/", headers={"User-Agent": user_agent})
+        headers = {}
+        if user_agent is not None:
+            headers["User-Agent"] = user_agent
+        res = await client.get("/", headers=headers)
 
     assert res.status == expected_status
 
@@ -62,6 +67,8 @@ async def test_aiohttp__user_agent_middleware__restrict(
 @pytest.mark.parametrize(
     "user_agent,sleep_seconds,expected_time,current_time",
     [
+        (None, 0.1, 0.2, "2019-07-26"),
+        ("", 0.1, 0.2, "2019-07-26"),
         ("invalid", 0.1, 0.2, "2019-07-26"),
         ("mambo/1a (Kiwi.com dev)", 0.1, 0.1, "2019-07-26"),
         ("invalid", 0.1, 0.1, "2019-05-07"),
@@ -74,8 +81,12 @@ async def test_aiohttp__user_agent_middleware__slowdown(
     client = await aiohttp_client(app)
 
     with freeze_time(current_time, tick=True):
+        headers = {}
+        if user_agent is not None:
+            headers["User-Agent"] = user_agent
+
         before_time = time.time()
-        res = await client.get("/", headers={"User-Agent": user_agent})
+        res = await client.get("/", headers=headers)
         request_time = time.time() - before_time
 
     assert res.status == 200

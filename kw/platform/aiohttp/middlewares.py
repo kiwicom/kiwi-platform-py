@@ -43,7 +43,7 @@ async def user_agent_middleware(request, handler):
     response = await handler(request)
     request_duration = time.time() - before_time
 
-    user_agent = utils.UserAgentValidator(request.headers["User-Agent"])
+    user_agent = utils.UserAgentValidator(request.headers.get("User-Agent"))
 
     if user_agent.slowdown:
         await asyncio.sleep(request_duration)
