@@ -209,3 +209,9 @@ the date configured by :obj:`settings.KIWI_REQUESTS_RESTRICT_DATETIME`.
     :obj:`settings.KIWI_REQUESTS_SLOWDOWN_DATETIME` and if the date is less then
     :obj:`settings.KIWI_REQUESTS_RESTRICT_DATETIME` (the default).
     This can increase busyness and overload a service.
+
+.. note::
+
+    If you want to disable the validation of requests, e.g. for development,
+    you can set ``KIWI_ENABLE_RESTRICTION_OF_REQUESTS`` environment variable to
+    ``false``.
