@@ -1,4 +1,5 @@
 import pytest
+from freezegun import freeze_time
 
 from kw.platform import utils as uut
 
@@ -25,6 +26,14 @@ def test_ensure_module_is_available():
 )
 def test_user_agent_re(user_agent, should_pass):
     assert uut.UserAgentValidator(user_agent).is_valid is should_pass
+
+
+def test_user_agent_restriction_disabled(mocker):
+    mocker.patch("kw.platform.settings.KIWI_ENABLE_RESTRICTION_OF_REQUESTS", False)
+
+    with freeze_time("2020-01-01"):
+        assert uut.UserAgentValidator("invalid").slowdown is False
+        assert uut.UserAgentValidator("invalid").restrict is False
 
 
 def test_construct_user_agent(app_env_vars):

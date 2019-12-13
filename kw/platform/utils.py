@@ -42,10 +42,14 @@ class UserAgentValidator:
 
     @property
     def slowdown(self):
+        if not settings.KIWI_ENABLE_RESTRICTION_OF_REQUESTS:
+            return False
         return not self.ok and datetime.utcnow() < REQ_RESTRICT_DATETIME
 
     @property
     def restrict(self):
+        if not settings.KIWI_ENABLE_RESTRICTION_OF_REQUESTS:
+            return False
         return not self.ok and not self.slowdown
 
 
