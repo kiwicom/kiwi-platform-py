@@ -192,6 +192,16 @@ For async applications built with :mod:`aiohttp`, you can use the
 
     app = web.Application(middlewares=[user_agent_middleware])
 
+
+And you can also use a decorator::
+
+    from kw.platform.aiohttp.uitls import mandatory_user_agent
+
+    @mandatory_user_agent
+    def handle(request):
+        # do stuff
+        return web.json_response(text="Hello World!")
+
 In case you need to write your own middleware for the validation, you can use
 the :class:`kw.platform.utils.UserAgentValidator` validator, like this::
 

@@ -39,15 +39,18 @@ async def user_agent_middleware(request, handler):
         (in the time frame when requests with invalid user-agent are being delayed).
         This can increase busyness and overload a service.
     """
+    user_agent = utils.UserAgentValidator(request.headers.get("User-Agent"))
+
+    if user_agent.restrict:
+        return web.json_response(
+            status=400, data={"message": settings.KIWI_RESTRICT_USER_AGENT_MESSAGE}
+        )
+
     before_time = time.time()
     response = await handler(request)
     request_duration = time.time() - before_time
 
-    user_agent = utils.UserAgentValidator(request.headers.get("User-Agent"))
-
     if user_agent.slowdown:
         await asyncio.sleep(request_duration)
-    elif user_agent.restrict:
-        raise web.HTTPBadRequest(text=settings.KIWI_RESTRICT_USER_AGENT_MESSAGE)
 
     return response

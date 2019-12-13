@@ -3,9 +3,14 @@ Helpers and Utils
 =================
 """
 
+import asyncio
+import time
 from functools import wraps
 
-from ..utils import httpdate
+from aiohttp import web
+
+from .. import settings
+from ..utils import UserAgentValidator, httpdate
 
 
 def set_sunset(response, when=None, info_url=None):
@@ -61,3 +66,36 @@ def sunset(when=None, info_url=None):
         return sunset_view
 
     return wrapper
+
+
+def mandatory_user_agent(handler):
+    """A decorator for the validation that the request to the decorated handler
+    is compliant with KW-RFC-22. See
+    :func:`kw.platform.aiohttp.middlewares.user_agent_middleware` for more information
+    about what happens to the request if the User-Agent header is not compliant.
+
+    Usage::
+
+        @mandatory_user_agent
+        async def handle(request):
+            return web.json_response(message="Hello, Wordl!")
+    """
+
+    @wraps(handler)
+    async def wrapped(request, *args, **kwargs):
+        user_agent = UserAgentValidator(request.headers.get("User-Agent"))
+        if user_agent.restrict:
+            return web.json_response(
+                status=400, data={"message": settings.KIWI_RESTRICT_USER_AGENT_MESSAGE}
+            )
+
+        before_time = time.time()
+        response = await handler(request, *args, **kwargs)
+        request_duration = time.time() - before_time
+
+        if user_agent.slowdown:
+            await asyncio.sleep(request_duration)
+
+        return response
+
+    return wrapped

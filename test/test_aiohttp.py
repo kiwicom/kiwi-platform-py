@@ -28,11 +28,15 @@ def aiomock():
         yield m
 
 
-def create_app(sleep_seconds=0, middlewares=None):
-    def hello(request):
+def create_app(sleep_seconds=0, middlewares=None, handler_decorators=None):
+    async def hello(request):
         if sleep_seconds:
             time.sleep(sleep_seconds)
-        return aiohttp.web.Response(text="Hello, world!")
+        return aiohttp.web.json_response(text="Hello, world!")
+
+    if handler_decorators:
+        for decorator in handler_decorators:
+            hello = decorator(hello)
 
     app = aiohttp.web.Application(middlewares=middlewares)
     app.router.add_get("/", hello)
@@ -40,19 +44,30 @@ def create_app(sleep_seconds=0, middlewares=None):
 
 
 @pytest.mark.parametrize(
-    "user_agent,expected_status,current_time",
+    "user_agent,expected_status,current_time,method",
     [
-        ("invalid", 200, "2019-05-21"),
-        (None, 400, "2020-01-01"),
-        ("", 400, "2020-01-01"),
-        ("invalid", 400, "2020-01-01"),
-        ("mambo/1a (Kiwi.com dev)", 200, "2020-01-01"),
+        ("invalid", 200, "2019-05-21", "middleware"),
+        (None, 400, "2020-01-01", "middleware"),
+        ("", 400, "2020-01-01", "middleware"),
+        ("invalid", 400, "2020-01-01", "middleware"),
+        ("mambo/1a (Kiwi.com dev)", 200, "2020-01-01", "middleware"),
+        ("invalid", 200, "2019-05-21", "decorator"),
+        (None, 400, "2020-01-01", "decorator"),
+        ("", 400, "2020-01-01", "decorator"),
+        ("invalid", 400, "2020-01-01", "decorator"),
+        ("mambo/1a (Kiwi.com dev)", 200, "2020-01-01", "decorator"),
     ],
 )
 async def test_aiohttp__user_agent_middleware__restrict(
-    aiohttp_client, loop, user_agent, expected_status, current_time
+    aiohttp_client, loop, user_agent, expected_status, current_time, method
 ):
-    app = create_app(middlewares=[uut.user_agent_middleware])
+    if method == "middleware":
+        app = create_app(middlewares=[uut.user_agent_middleware])
+    elif method == "decorator":
+        app = create_app(handler_decorators=[uut.mandatory_user_agent])
+    else:
+        assert False
+
     client = await aiohttp_client(app)
 
     with freeze_time(current_time, tick=True):
@@ -65,19 +80,30 @@ async def test_aiohttp__user_agent_middleware__restrict(
 
 
 @pytest.mark.parametrize(
-    "user_agent,sleep_seconds,expected_time,current_time",
+    "user_agent,sleep_seconds,expected_time,current_time,method",
     [
-        (None, 0.1, 0.2, "2019-07-26"),
-        ("", 0.1, 0.2, "2019-07-26"),
-        ("invalid", 0.1, 0.2, "2019-07-26"),
-        ("mambo/1a (Kiwi.com dev)", 0.1, 0.1, "2019-07-26"),
-        ("invalid", 0.1, 0.1, "2019-05-07"),
+        (None, 0.1, 0.2, "2019-07-26", "middleware"),
+        ("", 0.1, 0.2, "2019-07-26", "middleware"),
+        ("invalid", 0.1, 0.2, "2019-07-26", "middleware"),
+        ("mambo/1a (Kiwi.com dev)", 0.1, 0.1, "2019-07-26", "middleware"),
+        ("invalid", 0.1, 0.1, "2019-05-07", "middleware"),
+        (None, 0.1, 0.2, "2019-07-26", "decorator"),
+        ("", 0.1, 0.2, "2019-07-26", "decorator"),
+        ("invalid", 0.1, 0.2, "2019-07-26", "decorator"),
+        ("mambo/1a (Kiwi.com dev)", 0.1, 0.1, "2019-07-26", "decorator"),
+        ("invalid", 0.1, 0.1, "2019-05-07", "decorator"),
     ],
 )
 async def test_aiohttp__user_agent_middleware__slowdown(
-    aiohttp_client, loop, user_agent, sleep_seconds, expected_time, current_time
+    aiohttp_client, loop, user_agent, sleep_seconds, expected_time, current_time, method
 ):
-    app = create_app(sleep_seconds, middlewares=[uut.user_agent_middleware])
+    if method == "middleware":
+        app = create_app(sleep_seconds, middlewares=[uut.user_agent_middleware])
+    elif method == "decorator":
+        app = create_app(sleep_seconds, handler_decorators=[uut.mandatory_user_agent])
+    else:
+        assert False
+
     client = await aiohttp_client(app)
 
     with freeze_time(current_time, tick=True):
