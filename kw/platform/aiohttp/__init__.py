@@ -18,6 +18,7 @@ if ensure_module_is_available(required_module):
         patch_with_sentry,
         patch_with_user_agent,
     )
+    from .utils import mandatory_user_agent
     from .session import KiwiClientSession
 
     __all__ = [
@@ -25,6 +26,7 @@ if ensure_module_is_available(required_module):
         "patch",
         "patch_with_sentry",
         "patch_with_user_agent",
+        "mandatory_user_agent",
         "monkey",
         "user_agent_middleware",
         "KiwiClientSession",
