@@ -1,4 +1,4 @@
-__version__ = "0.2.1"
+__version__ = "0.3.0"
 
 __title__ = "kiwi-platform"
 __description__ = "Company standards as code for Kiwi.com"
