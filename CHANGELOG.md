@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.3.0 (2019-12-16)
+
+### Added
+
+-   Add decorator for User Agent validation
+    -   Issue [#36](https://github.com/kiwicom/kiwi-platform-py/issues/36)
+-   Add env variable for disabling validation of User-Agent
+    -   Issue [#35](https://github.com/kiwicom/kiwi-platform-py/issues/35)
+
+### Fixed
+
+-   Handle missing or empty User-Agent header in middlewares
+    -   Issue [#32](https://github.com/kiwicom/kiwi-platform-py/issues/32)
+
 ## 0.2.1 (2019-07-25)
 
 ### Added
