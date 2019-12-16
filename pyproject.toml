@@ -44,7 +44,7 @@ include = ["*.md", "*.toml", "*.txt", "*.yaml", ".coveragerc", "tox.ini"]
 [tool.poetry.dependencies]
 python = "~2.7 || ^3.5.3"
 webob = "^1.8"
-python-dateutil = "^2.8"
+python-dateutil = "^2.8.1"
 aiohttp = { version = "^3.5", optional = true, python = "^3.5.3" }
 sphinx = { version = "^2.1", optional = true, python = "^3.5.3" }
 wrapt = "^1.11"
